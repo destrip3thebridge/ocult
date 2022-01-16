@@ -17,12 +17,14 @@ def get_all():
     connection = pymysql.connect(host = host,
                         user = username,
                         password = password,
-                        cursorclass = pymysql.cursors.DictCursor
+                        cursorclass = pymysql.cursors.DictCursor,
+                        database = 'ocult'
     )
 
     cursor = connection.cursor()
     select_users = "SELECT * FROM user"
-    result = cursor.execute(select_users).fetchall()
+    cursor.execute(select_users)
+    result = cursor.fetchone()
     connection.close()
     return {'users': result}
 
