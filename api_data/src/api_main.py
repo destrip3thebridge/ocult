@@ -38,8 +38,29 @@ def get_one_user(iduser):
     )
 
     cursor = connection.cursor()
-    select_user = "SELECT * FROM user WHERE iduser=?"
-    result = cursor.execute(select_user, (iduser,)).fetchall()
+    select_user = 'SELECT * FROM user WHERE iduser={iduser}'
+    # cursor.execute(select_user, (iduser,))
+    cursor.execute(select_user)
+    result = cursor.fetchall()
+    connection.close()
+    return {'user': result}
+
+@app.route('/api/v2/resources/users', methods=['GET'])
+def get_one_user_v2():
+    connection = pymysql.connect(host = host,
+                        user = username,
+                        password = password_db,
+                        cursorclass = pymysql.cursors.DictCursor,
+                        database = 'ocult'
+    )
+
+    query_parameters = request.get_json()
+    id = query_parameters.get('id')
+
+    cursor = connection.cursor()
+    select_user = f'SELECT * FROM user WHERE iduser={id}'
+    cursor.execute(select_user)
+    result = cursor.fetchall()
     connection.close()
     return {'user': result}
 
