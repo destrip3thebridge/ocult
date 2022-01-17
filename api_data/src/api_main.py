@@ -65,31 +65,28 @@ def get_one_user_v2():
     return {'user': result}
 
 
-@app.route('/api/v1/new_user', methods=["POST"])
-def new_user():
-    connection = pymysql.connect(host = host,
-                        user = username,
-                        password = password_db,
-                        cursorclass = pymysql.cursors.DictCursor,
-                        database = 'ocult'
-    )
+# @app.route('/api/v1/new_user', methods=["POST"])
+# def new_user():
+#     connection = pymysql.connect(host = host,
+#                         user = username,
+#                         password = password_db,
+#                         cursorclass = pymysql.cursors.DictCursor,
+#                         database = 'ocult'
+#     )
 
-    cursor = connection.cursor()
-    email= request.args.get("email",None)
-    idcompany = request.args.get("idcompany",None)
-    iduser = request.args.get("iduser",None)
-    image = request.args.get("image",None)
-    lastscore = request.args.get("lastscore",None)
-    name = request.args.get("name",None)
-    password = request.args.get("password",None)
-    list_values = [email,idcompany, iduser,image,lastscore,name,password]
-    if email is None or idcompany is None or iduser is None or image is None or lastscore is None or name is None or password is None:
-        return "Args empty, the data was not stored"
-    else:
-        cursor.execute('INSERT INTO user (email, idcompany, iduser, image, lastscore, name, password) VALUES (email, idcompany, iduser, image, lastscore, name, password)')
+#     cursor = connection.cursor()
+#     email= request.args.get("email",None)
+#     idcompany = request.args.get("idcompany",None)
+#     lastscore = request.args.get("lastscore",None)
+#     name = request.args.get("name",None)
+#     password = request.args.get("password",None)
+#     # if email is None or idcompany is None or lastscore is None or name is None or password is None:
+#     #     return "Args empty, the data was not stored"
+#     # else:
+#     cursor.execute(f'INSERT INTO user (email, idcompany, lastscore, name, password) VALUES ({email}, {idcompany}, {lastscore}, {name}, {password})')
 
-    connection.commit()
-    connection.close()
+#     connection.commit()
+#     connection.close()
 
 @app.route('/api/v1/resources/company', methods=['GET'])
 def get_all_companies():
@@ -122,5 +119,21 @@ def get_company(idcompany):
     result = cursor.execute(select_company, (idcompany,)).fetchall()
     connection.close()
     return {'empresas': result}
+
+@app.route('/api/v1/resources/question/get_all', methods=['GET'])
+def get_all_questions():
+    connection = pymysql.connect(host = host,
+                        user = username,
+                        password = password_db,
+                        cursorclass = pymysql.cursors.DictCursor,
+                        database = 'ocult'
+    )
+
+    cursor = connection.cursor()
+    select_question = 'SELECT * FROM question'
+    cursor.execute(select_question)
+    result = cursor.fetchall()
+    connection.close()
+    return {'questions': result}
 
 app.run()
