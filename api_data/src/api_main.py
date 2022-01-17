@@ -8,15 +8,15 @@ app = Flask(__name__)
 app.config["DEBUG"] = True
 
 username = "admin"
-password = "83J%y92vwWgAyvJ%DW%YvXB*"
+password_db = "83J%y92vwWgAyvJ%DW%YvXB*"
 host = "database-ocult.crt8burntnnh.us-east-1.rds.amazonaws.com"
 port = 3306
 
 @app.route('/api/v1/resources/users/all', methods=['GET'])
-def get_all():
+def get_all_users():
     connection = pymysql.connect(host = host,
                         user = username,
-                        password = password,
+                        password = password_db,
                         cursorclass = pymysql.cursors.DictCursor,
                         database = 'ocult'
     )
@@ -24,54 +24,82 @@ def get_all():
     cursor = connection.cursor()
     select_users = "SELECT * FROM user"
     cursor.execute(select_users)
-    result = cursor.fetchone()
+    result = cursor.fetchall()
     connection.close()
     return {'users': result}
 
-@app.route('/api/v1/resources/books/authors', methods=['GET'])
-def get_count_authors():
-    connection = sqlite3.connect('books.db')
-    cursor = connection.cursor()
-    select_books = "SELECT author,count(author) FROM books GROUP BY 1 ORDER BY 2 DESC"
-    result = cursor.execute(select_books).fetchall()
-    connection.close()
-    return {'books': result}
+@app.route('/api/v1/resources/users/<string:iduser>', methods=['GET'])
+def get_one_user(iduser):
+    connection = pymysql.connect(host = host,
+                        user = username,
+                        password = password_db,
+                        cursorclass = pymysql.cursors.DictCursor,
+                        database = 'ocult'
+    )
 
-@app.route('/api/v1/resources/book/<string:author>', methods=['GET'])
-def get_by_author(author):
-    author='%'+author+'%'
-    connection = sqlite3.connect('books.db')
     cursor = connection.cursor()
-    select_books = "SELECT * FROM books WHERE author LIKE ?"
-    result = cursor.execute(select_books, (author,)).fetchall()
+    select_user = "SELECT * FROM user WHERE iduser=?"
+    result = cursor.execute(select_user, (iduser,)).fetchall()
     connection.close()
-    return {'books': result}
+    return {'user': result}
 
-@app.route('/api/v1/resources/book/filter', methods=['GET'])
-def filter_table():
-    query_parameters = request.get_json()
-    id = query_parameters.get('id')
-    published = query_parameters.get('published')
-    author = query_parameters.get('author')
-    connection = sqlite3.connect('books.db')
+
+@app.route('/api/v1/new_user', methods=["POST"])
+def new_user():
+    connection = pymysql.connect(host = host,
+                        user = username,
+                        password = password_db,
+                        cursorclass = pymysql.cursors.DictCursor,
+                        database = 'ocult'
+    )
+
     cursor = connection.cursor()
-    query = "SELECT * FROM books WHERE"
-    to_filter = []
-    if id:
-        query += ' id=? AND'
-        to_filter.append(id)
-    if published:
-        query += ' published=? AND'
-        to_filter.append(published)
-    if author:
-        query += ' author=? AND'
-        to_filter.append(author)
-    if not (id or published or author):
-        return "page not found 404"
-    query = query[:-4] + ';'
-    result = cursor.execute(query, to_filter).fetchall()
-    connection.close()
-    return {'books': result}
+    email= request.args.get("email",None)
+    idcompany = request.args.get("idcompany",None)
+    iduser = request.args.get("iduser",None)
+    image = request.args.get("image",None)
+    lastscore = request.args.get("lastscore",None)
+    name = request.args.get("name",None)
+    password = request.args.get("password",None)
+    list_values = [email,idcompany, iduser,image,lastscore,name,password]
+    if email is None or idcompany is None or iduser is None or image is None or lastscore is None or name is None or password is None:
+        return "Args empty, the data was not stored"
+    else:
+        cursor.execute('INSERT INTO user (email, idcompany, iduser, image, lastscore, name, password) VALUES (email, idcompany, iduser, image, lastscore, name, password)')
 
+    connection.commit()
+    connection.close()
+
+@app.route('/api/v1/resources/company', methods=['GET'])
+def get_all_companies():
+    connection = pymysql.connect(host = host,
+                        user = username,
+                        password = password_db,
+                        cursorclass = pymysql.cursors.DictCursor,
+                        database = 'ocult'
+    )
+
+    cursor = connection.cursor()
+    select_company = "SELECT * FROM company"
+    cursor.execute(select_company)
+    result = cursor.fetchall()
+    connection.close()
+    return {'empresas': result}
+
+
+@app.route('/api/v1/resources/company/<string:company>', methods=['GET'])
+def get_company(idcompany):
+    connection = pymysql.connect(host = host,
+                        user = username,
+                        password = password_db,
+                        cursorclass = pymysql.cursors.DictCursor,
+                        database = 'ocult'
+    )
+
+    cursor = connection.cursor()
+    select_company = "SELECT * FROM company WHERE company=?"
+    result = cursor.execute(select_company, (idcompany,)).fetchall()
+    connection.close()
+    return {'empresas': result}
 
 app.run()
