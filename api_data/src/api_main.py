@@ -120,7 +120,7 @@ def get_company(idcompany):
     connection.close()
     return {'empresas': result}
 
-@app.route('/api/v1/resources/question/get_all', methods=['GET'])
+@app.route('git stat', methods=['GET'])
 def get_all_questions():
     connection_q = pymysql.connect(host = host,
                         user = username,
