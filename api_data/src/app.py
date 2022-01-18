@@ -144,4 +144,9 @@ def get_all_questions():
     connection_q.close()
     return {'questions': result}
 
+@app.route('/api/v1/resources/data_science_team', methods=['GET'])
+def get_response():
+    return {'Quienes son los mejores?': 'The data science team!!'}
+
+
 app.run()
