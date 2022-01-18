@@ -122,28 +122,28 @@ def get_company(idcompany):
 
 @app.route('/api/v1/resources/question/get_all', methods=['GET'])
 def get_all_questions():
-    connection = pymysql.connect(host = host,
+    connection_q = pymysql.connect(host = host,
                         user = username,
                         password = password_db,
                         cursorclass = pymysql.cursors.DictCursor,
                         database = 'ocult'
     )
 
-    cursor = connection.cursor()
+    cursor = connection_q.cursor()
     select = 'SELECT * FROM question'
     cursor.execute(select)
     result_questions = cursor.fetchall()
     result = []
     for q in result_questions:
-        cursor = connection.cursor()
+        cursor = connection_q.cursor()
         select = f'SELECT * FROM answer WHERE idquestion={q["idquestion"]}'
         cursor.execute(select)
         result_answer = cursor.fetchall()
-        connection.close()
+        # connection_q.close()
         q['answer'] = result_answer
         result.append(q)
         print(q['idquestion'])
-    connection.close()
+    connection_q.close()
     return {'questions': result}
 
 app.run()
