@@ -135,17 +135,9 @@ def get_all_questions():
     result_questions = cursor.fetchall()
     result = []
     for q in result_questions:
-<<<<<<< HEAD
-        cursor = connection_q.cursor()
         select = f'SELECT * FROM answer WHERE idquestion={q["idquestion"]}'
         cursor.execute(select)
         result_answer = cursor.fetchall()
-        # connection_q.close()
-=======
-        select = f'SELECT * FROM answer WHERE idquestion={q["idquestion"]}'
-        cursor.execute(select)
-        result_answer = cursor.fetchall()
->>>>>>> 27bea918b7cce313db0abccbadc8beb8dda7fa0b
         q['answer'] = result_answer
         result.append(q)
         print(q['idquestion'])
