@@ -144,4 +144,5 @@ def get_all_questions():
     connection.close()
     return {'questions': result}
 
-app.run()
+if __name__ == '__main__':
+    app.run()
