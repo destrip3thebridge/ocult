@@ -149,4 +149,5 @@ def get_response():
     return {'Quienes son los mejores?': 'The data science team!!'}
 
 
-app.run()
+if __name__ == "__main__":
+    app.run(host='0.0.0.0',port=8080)
