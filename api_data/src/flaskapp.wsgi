@@ -1,0 +1,6 @@
+#flaskapp.wsgi
+
+import sys
+sys.path.insert(0,"/var/www/html/flaskapp")
+
+from app.app import app as application
